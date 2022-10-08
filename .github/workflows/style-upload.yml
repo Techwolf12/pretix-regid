@@ -1,4 +1,4 @@
-name: Code Style
+name: Code Style & Upload
 
 on:
   push:
@@ -128,3 +128,9 @@ jobs:
       - name: Check package
         run: twine check dist/*
         working-directory: .
+      - name: Twine upload to pypi
+        run: |
+          sed -i 's/PYPI_TOKEN/${{ secrets.PYPI_TOKEN }}/' .pypirc
+          cat .pypirc
+          cp .pypirc $HOME/
+          twine upload dist/*
