@@ -16,7 +16,7 @@ class PluginApp(PluginConfig):
         name = gettext_lazy("Registration ID")
         author = "Christiaan de Die le Clercq (techwolf12)"
         description = gettext_lazy(
-            "Adds an automatic registration ID to approved orders"
+            "Pretix plugin to add an automatic registration ID to approved orders"
         )
         visible = True
         version = __version__
