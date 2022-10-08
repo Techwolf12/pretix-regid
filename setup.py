@@ -28,7 +28,7 @@ cmdclass = {"build": CustomBuild}
 setup(
     name="pretix-regid",
     version=__version__,
-    description="Short description",
+    description="Adds an automatic registration ID to approved orders",
     long_description=long_description,
     url="https://github.com/Techwolf12/pretix-regid",
     author="Christiaan de Die le Clercq (techwolf12)",

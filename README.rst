@@ -3,7 +3,7 @@ Registration ID
 
 This is a plugin for `pretix`_. 
 
-Short description
+Adds an automatic registration ID to approved orders. When enabling this plugin it will automatically create registration ID's on the event it is enabled. It has to be enabled from the start to work correctly, otherwise you will have users without registration ID.
 
 Development setup
 -----------------
