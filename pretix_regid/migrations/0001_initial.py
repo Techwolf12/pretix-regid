@@ -7,15 +7,22 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ('pretixbase', '0118_auto_20190423_0839'),
+        ("pretixbase", "0118_auto_20190423_0839"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='RegistrationID',
+            name="RegistrationID",
             fields=[
-                ('regid', models.PositiveIntegerField(verbose_name='RegistrationID')),
-                ('event', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='regids', to='pretixbase.Event')),
+                ("regid", models.PositiveIntegerField(verbose_name="RegistrationID")),
+                (
+                    "event",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="regids",
+                        to="pretixbase.Event",
+                    ),
+                ),
                 (
                     "order",
                     models.OneToOneField(
@@ -26,7 +33,7 @@ class Migration(migrations.Migration):
                 ),
             ],
             options={
-                'unique_together': {('event', 'order')},
+                "unique_together": {("event", "order")},
             },
         )
     ]

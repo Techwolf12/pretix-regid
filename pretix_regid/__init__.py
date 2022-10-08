@@ -15,7 +15,9 @@ class PluginApp(PluginConfig):
     class PretixPluginMeta:
         name = gettext_lazy("Registration ID")
         author = "Christiaan de Die le Clercq (techwolf12)"
-        description = gettext_lazy("Adds an automatic registration ID to approved orders")
+        description = gettext_lazy(
+            "Adds an automatic registration ID to approved orders"
+        )
         visible = True
         version = __version__
         category = "FEATURE"
@@ -26,4 +28,4 @@ class PluginApp(PluginConfig):
 
 
 default_app_config = "pretix_regid.PluginApp"
-#TODO Show regid in admin/user side
+# TODO Show regid in admin/user side
