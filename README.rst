@@ -1,9 +1,19 @@
+[![Code Style & Upload](https://github.com/Techwolf12/pretix-regid/actions/workflows/style-upload.yml/badge.svg)](https://github.com/Techwolf12/pretix-regid/actions/workflows/style-upload.yml)
+
 Registration ID
 ==========================
 
 This is a plugin for `pretix`_. 
 
-Adds an automatic registration ID to approved orders. When enabling this plugin it will automatically create registration ID's on the event it is enabled. It has to be enabled from the start to work correctly, otherwise you will have users without registration ID.
+Adds an automatic registration ID to approved orders. When enabling this plugin it will automatically create registration ID's on the event it is enabled. It has to be enabled from the start to work correctly, otherwise you will have users without registration ID.  
+
+  
+To install:
+```
+pip3 install pretix-regid && python3 -m pretix migrate && python3 -m pretix rebuild && service pretix-web restart
+```
+
+Then just activate it in your event config.
 
 Development setup
 -----------------
