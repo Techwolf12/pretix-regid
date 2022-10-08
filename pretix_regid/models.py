@@ -1,6 +1,6 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
-from pretix.base.models import Event, Order, OrderPosition, LoggedModel
+from pretix.base.models import Event, LoggedModel, Order, OrderPosition
 
 
 class RegistrationID(LoggedModel):

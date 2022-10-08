@@ -12,6 +12,7 @@ from pretix.base.models import Event, Order, OrderPosition
 from pretix.base.services.cart import CartError
 from pretix.base.settings import settings_hierarkey
 from pretix.base.signals import logentry_display, order_approved
+
 from .models import RegistrationID
 
 logger = logging.getLogger(__name__)
