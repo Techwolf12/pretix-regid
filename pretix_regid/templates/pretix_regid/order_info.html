@@ -1,0 +1,18 @@
+{% load i18n %}
+{% load eventurl %}
+{% if regid %}
+<div class="panel panel-primary">
+    <div class="panel-heading">
+        <h3 class="panel-title">
+            {% trans "Registraion ID" %}
+        </h3>
+    </div>
+    <div class="panel-body">
+            <p>
+                {% blocktrans trimmed with regid=regid.regid %}
+                    Your registration ID is: <strong>{{ regid }}</strong>.
+                {% endblocktrans %}
+            </p>
+    </div>
+</div>
+{% endif %}

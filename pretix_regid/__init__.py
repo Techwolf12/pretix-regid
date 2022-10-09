@@ -28,4 +28,3 @@ class PluginApp(PluginConfig):
 
 
 default_app_config = "pretix_regid.PluginApp"
-# TODO Show regid in admin/user side
