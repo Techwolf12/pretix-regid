@@ -44,12 +44,10 @@ def order_approved(order: Order, *args, **kwargs):
 def control_order_info(sender: Event, request, order: Order, **kwargs):
     template = get_template("pretix_regid/control_order_info.html")
     try:
-        regid_from_order = (
-            RegistrationID.objects.get(order=order)
-        )
+        regid_from_order = RegistrationID.objects.get(order=order)
     except RegistrationID.DoesNotExist:
         regid_from_order = None
-    
+
     ctx = {
         "order": order,
         "event": sender,
@@ -64,12 +62,10 @@ def control_order_info(sender: Event, request, order: Order, **kwargs):
 def order_info(sender: Event, order: Order, **kwargs):
     template = get_template("pretix_regid/order_info.html")
     try:
-        regid_from_order = (
-            RegistrationID.objects.get(order=order)
-        )
+        regid_from_order = RegistrationID.objects.get(order=order)
     except RegistrationID.DoesNotExist:
         regid_from_order = None
-    
+
     ctx = {
         "order": order,
         "event": sender,
