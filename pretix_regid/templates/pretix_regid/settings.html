@@ -4,13 +4,16 @@
 {% block title %} {% trans "Registration ID Settings" %} {% endblock %}
 {% block inside %}
   <h1>{% trans "Registration ID Settings" %}</h1>
-   <p>{% trans "You can setup the RegID feature here." %}</p>
+   <p>{% trans "You can setup the Registraion ID feature here." %}</p>
     <form action="" method="post" class="form-horizontal" enctype="multipart/form-data">
         {% csrf_token %}
         <fieldset>
             {% bootstrap_form_errors form %}
-            <p>{% trans "Selecting a product here only generates registration ID's for these products. By default, no registration ID's are generated" %}</p>
             {% bootstrap_field form.regid__products layout="control" %}
+            {% bootstrap_field form.regid__set_on_placed layout="control" %}
+            {% bootstrap_field form.regid__set_on_approved layout="control" %}
+            {% bootstrap_field form.regid__set_on_paid layout="control" %}
+            {% bootstrap_field form.regid__set_on_changed layout="control" %}
         </fieldset>
         <div class="form-group submit-group">
             <button type="submit" class="btn btn-primary btn-save">

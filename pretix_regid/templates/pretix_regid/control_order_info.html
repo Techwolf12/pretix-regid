@@ -11,12 +11,12 @@
         {% if regid %}
         <p>
             {% blocktrans trimmed with regid=regid.regid %}
-                This Order's registration ID is: <strong>{{ regid }}</strong>.
+                This order's registration ID is: <strong>{{ regid }}</strong>.
             {% endblocktrans %}
         </p>
         {% else %}
             <p>
-                {% trans "Registration ID is not set." %}
+                {% trans "Registration ID is not set. Maybe this order existed before the registration ID module, or your settings don't allow for a product type or state to get a registration ID." %}
             </p>
         {% endif %}
     </div>

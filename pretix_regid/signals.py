@@ -5,7 +5,7 @@ from django.template.loader import get_template
 from django.urls import resolve, reverse
 from django.utils.translation import gettext_lazy as _
 from pretix.base.models import Event, Order
-from pretix.base.signals import order_approved, order_placed, order_changed
+from pretix.base.signals import order_approved, order_placed, order_changed, order_paid
 from pretix.control.signals import nav_event_settings, order_info as control_order_info
 from pretix.presale.signals import order_info
 
@@ -63,17 +63,30 @@ def set_regid_on_order(order: Order):
 # Once the order gets approved, add a registration ID to the order
 @receiver(order_approved, dispatch_uid="pretix_regid")
 def order_approved(order: Order, *args, **kwargs):
-    set_regid_on_order(order)
+    event: Event = order.event
+    if event.settings.regid__approved:
+        set_regid_on_order(order)
 
 # Once the order gets placed, add a registration ID to the order
 @receiver(order_placed, dispatch_uid="pretix_regid")
 def order_placed(order: Order, *args, **kwargs):
-    set_regid_on_order(order)
+    event: Event = order.event
+    if event.settings.regid__placed:
+        set_regid_on_order(order)
 
 # Once the order gets changed, add a registration ID to the order
 @receiver(order_changed, dispatch_uid="pretix_regid")
 def order_changed(order: Order, *args, **kwargs):
-    set_regid_on_order(order)
+    event: Event = order.event
+    if event.settings.regid__changed:
+        set_regid_on_order(order)
+
+# Once the order gets paid, add a registration ID to the order
+@receiver(order_paid, dispatch_uid="pretix_regid")
+def order_paid(order: Order, *args, **kwargs):
+    event: Event = order.event
+    if event.settings.regid__paid:
+        set_regid_on_order(order)
 
 # TODO Remove when order is cancelled?
 # TODO Recycle old reg id's?
