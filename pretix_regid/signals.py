@@ -5,7 +5,7 @@ from django.template.loader import get_template
 from django.urls import resolve, reverse
 from django.utils.translation import gettext_lazy as _
 from pretix.base.models import Event, Order
-from pretix.base.signals import order_approved, order_placed, order_changed, order_paid
+from pretix.base.signals import order_approved, order_changed, order_paid, order_placed
 from pretix.control.signals import nav_event_settings, order_info as control_order_info
 from pretix.presale.signals import order_info
 
@@ -33,13 +33,11 @@ def set_regid_on_order(order: Order):
 
     # If there exists a RegID, or we don't have a OrderPosition that needs one, do nothing.
     if set_regid is False:
-        logger.info("We don't need a regid for this order based on products")
         return
 
     if regid_order is not None and regid_order.count() > 0:
-        logger.info("Order changed with existing regid, keeping")
         return
-    
+
     try:
         all_regids_in_event = (
             RegistrationID.objects.all().filter(event=event).order_by("-regid")
@@ -67,6 +65,7 @@ def order_approved(order: Order, *args, **kwargs):
     if event.settings.regid__approved:
         set_regid_on_order(order)
 
+
 # Once the order gets placed, add a registration ID to the order
 @receiver(order_placed, dispatch_uid="pretix_regid")
 def order_placed(order: Order, *args, **kwargs):
@@ -74,12 +73,14 @@ def order_placed(order: Order, *args, **kwargs):
     if event.settings.regid__placed:
         set_regid_on_order(order)
 
+
 # Once the order gets changed, add a registration ID to the order
 @receiver(order_changed, dispatch_uid="pretix_regid")
 def order_changed(order: Order, *args, **kwargs):
     event: Event = order.event
     if event.settings.regid__changed:
         set_regid_on_order(order)
+
 
 # Once the order gets paid, add a registration ID to the order
 @receiver(order_paid, dispatch_uid="pretix_regid")
