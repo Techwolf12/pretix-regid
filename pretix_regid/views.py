@@ -16,34 +16,42 @@ class RoomsharingSettingsForm(SettingsForm):
         label=_("Registration ID products"),
         required=False,
         widget=CheckboxSelectMultiple,
-        help_text=_("""
+        help_text=_(
+            """
         Selecting a product here only generates registration ID's for these products.
         By default, no registration ID's are generated unless products are selected here.
-        """),
+        """
+        ),
     )
 
     regid__set_on_placed = forms.BooleanField(
         required=False,
-        label=_('Set Registration ID on placed'),
-        help_text=_('Set the registration ID on placed orders. If you leave the rest empty, it will only set it once the order is placed'),
+        label=_("Set Registration ID on placed"),
+        help_text=_(
+            "Set the registration ID on placed orders. If you leave the rest empty, it will only set it once the order is placed"
+        ),
     )
 
     regid__set_on_approved = forms.BooleanField(
         required=False,
-        label=_('Set Registration ID on approved'),
-        help_text=_('Set the registration ID on approved orders. If you leave the rest empty, it will only set it once the order is approved'),
+        label=_("Set Registration ID on approved"),
+        help_text=_(
+            "Set the registration ID on approved orders. If you leave the rest empty, it will only set it once the order is approved"
+        ),
     )
 
     regid__set_on_paid = forms.BooleanField(
         required=False,
-        label=_('Set Registration ID on paid'),
-        help_text=_('Set the registration ID on paid orders. If you leave the rest empty, it will only set it once the order is paid'),
+        label=_("Set Registration ID on paid"),
+        help_text=_(
+            "Set the registration ID on paid orders. If you leave the rest empty, it will only set it once the order is paid"
+        ),
     )
 
     regid__set_on_changed = forms.BooleanField(
         required=False,
-        label=_('Set Registration ID on order changed'),
-        help_text=_('Set the registration ID when a order has a change in products.'),
+        label=_("Set Registration ID on order changed"),
+        help_text=_("Set the registration ID when a order has a change in products."),
     )
 
     def __init__(self, *args, **kwargs):
@@ -55,7 +63,9 @@ class RoomsharingSettingsForm(SettingsForm):
         )
 
         self.fields["regid__products"].choices = choices
-        self.initial["regid__products"] = filter(lambda x: x[0] in event.settings.regid__products, choices)
+        self.initial["regid__products"] = filter(
+            lambda x: x[0] in event.settings.regid__products, choices
+        )
 
 
 class SettingsView(EventSettingsViewMixin, EventSettingsFormView):

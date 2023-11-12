@@ -26,7 +26,9 @@ def set_regid_on_order(order: Order):
     # Check for existing reg id on order
     try:
         regid_order = (
-            RegistrationID.objects.all().filter(event=event, order=order).order_by("-regid")
+            RegistrationID.objects.all()
+            .filter(event=event, order=order)
+            .order_by("-regid")
         )
     except RegistrationID.DoesNotExist:
         regid_order = None
@@ -89,6 +91,7 @@ def order_paid(order: Order, *args, **kwargs):
     if event.settings.regid__paid:
         set_regid_on_order(order)
 
+
 # TODO Remove when order is cancelled?
 # TODO Recycle old reg id's?
 
@@ -126,6 +129,7 @@ def order_info(sender: Event, order: Order, **kwargs):
     }
 
     return template.render(ctx)
+
 
 @receiver(nav_event_settings, dispatch_uid="pretix_regid")
 def navbar_settings(sender, request, **kwargs):
