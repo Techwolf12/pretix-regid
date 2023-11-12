@@ -2,9 +2,11 @@
 import logging
 from django.dispatch import receiver
 from django.template.loader import get_template
+from django.urls import resolve, reverse
+from django.utils.translation import gettext_lazy as _
 from pretix.base.models import Event, Order
-from pretix.base.signals import order_approved
-from pretix.control.signals import order_info as control_order_info
+from pretix.base.signals import order_approved, order_placed, order_changed
+from pretix.control.signals import nav_event_settings, order_info as control_order_info
 from pretix.presale.signals import order_info
 
 from .models import RegistrationID
@@ -12,10 +14,32 @@ from .models import RegistrationID
 logger = logging.getLogger(__name__)
 
 
-# Once the order gets approved, add a registration ID to the order
-@receiver(order_approved, dispatch_uid="pretix_regid")
-def order_approved(order: Order, *args, **kwargs):
+def set_regid_on_order(order: Order):
     event: Event = order.event
+    set_regid = False
+
+    # Check if order Positions have a product for which we need to create a regid
+    for orderPos in order.positions.all():
+        if str(orderPos.item.id) in event.settings.regid__products:
+            set_regid = True
+
+    # Check for existing reg id on order
+    try:
+        regid_order = (
+            RegistrationID.objects.all().filter(event=event, order=order).order_by("-regid")
+        )
+    except RegistrationID.DoesNotExist:
+        regid_order = None
+
+    # If there exists a RegID, or we don't have a OrderPosition that needs one, do nothing.
+    if set_regid is False:
+        logger.info("We don't need a regid for this order based on products")
+        return
+
+    if regid_order is not None and regid_order.count() > 0:
+        logger.info("Order changed with existing regid, keeping")
+        return
+    
     try:
         all_regids_in_event = (
             RegistrationID.objects.all().filter(event=event).order_by("-regid")
@@ -33,8 +57,23 @@ def order_approved(order: Order, *args, **kwargs):
 
     regid = RegistrationID(regid=new_regid, event=event, order=order)
     regid.save()
-    logger.info("RegID Created:" + str(regid.regid))
+    logger.info("Registration ID Created:" + str(regid.regid))
 
+
+# Once the order gets approved, add a registration ID to the order
+@receiver(order_approved, dispatch_uid="pretix_regid")
+def order_approved(order: Order, *args, **kwargs):
+    set_regid_on_order(order)
+
+# Once the order gets placed, add a registration ID to the order
+@receiver(order_placed, dispatch_uid="pretix_regid")
+def order_placed(order: Order, *args, **kwargs):
+    set_regid_on_order(order)
+
+# Once the order gets changed, add a registration ID to the order
+@receiver(order_changed, dispatch_uid="pretix_regid")
+def order_changed(order: Order, *args, **kwargs):
+    set_regid_on_order(order)
 
 # TODO Remove when order is cancelled?
 # TODO Recycle old reg id's?
@@ -73,3 +112,21 @@ def order_info(sender: Event, order: Order, **kwargs):
     }
 
     return template.render(ctx)
+
+@receiver(nav_event_settings, dispatch_uid="pretix_regid")
+def navbar_settings(sender, request, **kwargs):
+    url = resolve(request.path_info)
+    return [
+        {
+            "label": _("Registration ID"),
+            "url": reverse(
+                "plugins:pretix_regid:control.regid.settings",
+                kwargs={
+                    "event": request.event.slug,
+                    "organizer": request.organizer.slug,
+                },
+            ),
+            "active": url.namespace == "plugins:pretix_regid"
+            and url.url_name == "control.regid.settings",
+        }
+    ]

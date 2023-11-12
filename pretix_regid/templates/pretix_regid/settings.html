@@ -1,0 +1,21 @@
+{% extends "pretixcontrol/event/settings_base.html" %}
+{% load i18n %}
+{% load bootstrap3 %}
+{% block title %} {% trans "Registration ID Settings" %} {% endblock %}
+{% block inside %}
+  <h1>{% trans "Registration ID Settings" %}</h1>
+   <p>{% trans "You can setup the RegID feature here." %}</p>
+    <form action="" method="post" class="form-horizontal" enctype="multipart/form-data">
+        {% csrf_token %}
+        <fieldset>
+            {% bootstrap_form_errors form %}
+            <p>{% trans "Selecting a product here only generates registration ID's for these products. By default, no registration ID's are generated" %}</p>
+            {% bootstrap_field form.regid__products layout="control" %}
+        </fieldset>
+        <div class="form-group submit-group">
+            <button type="submit" class="btn btn-primary btn-save">
+                {% trans "Save" %}
+            </button>
+        </div>
+    </form>
+{% endblock %}
