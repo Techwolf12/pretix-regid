@@ -1,0 +1,4 @@
+[plugin]
+package = "pretix-regid"
+modules = [ "pretix_regid" ]
+marketplace_name = "registrationid"
