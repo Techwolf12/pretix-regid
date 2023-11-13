@@ -63,9 +63,9 @@ class RoomsharingSettingsForm(SettingsForm):
         )
 
         self.fields["regid__products"].choices = choices
-        self.initial["regid__products"] = filter(
-            lambda x: x[0] in event.settings.regid__products, choices
-        )
+        #self.initial["regid__products"] = filter(
+        #    lambda x: x[0] in event.settings.regid__products, choices
+        #)
 
 
 class SettingsView(EventSettingsViewMixin, EventSettingsFormView):
