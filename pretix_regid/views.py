@@ -39,7 +39,11 @@ class RegistrationIDSettingsForm(SettingsForm):
     regid__set_on_changed = forms.BooleanField(
         required=False,
         label=_("Set Registration ID on order changed"),
-        help_text=_("Set the registration ID when a order has a change in products."),
+        help_text=_(
+            "Also set a registration ID when an order without one is changed so that it "
+            "now contains one of the selected products. Orders that already have a "
+            "registration ID keep it."
+        ),
     )
 
     def __init__(self, *args, **kwargs):
