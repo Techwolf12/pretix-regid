@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-18 20:46+0200\n"
+"POT-Creation-Date: 2026-10-18 21:07+0200\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Christiaan de Die le Clercq (techwolf12)\n"
 "Language-Team: \n"
@@ -11,7 +11,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: pretix_regid/apps.py:16 pretix_regid/signals.py:116
+#: pretix_regid/apps.py:16 pretix_regid/signals.py:135
 #: pretix_regid/templates/pretix_regid/control_order_info.html:7
 #: pretix_regid/templates/pretix_regid/order_info.html:7
 msgid "Registration ID"
@@ -47,7 +47,7 @@ msgstr ""
 msgid "You can setup the registration ID feature here."
 msgstr ""
 
-#: pretix_regid/templates/pretix_regid/settings.html:20
+#: pretix_regid/templates/pretix_regid/settings.html:18
 msgid "Save"
 msgstr ""
 
@@ -62,39 +62,35 @@ msgid ""
 msgstr ""
 
 #: pretix_regid/views.py:27
-msgid "Set Registration ID on placed"
+msgid "Never"
+msgstr ""
+
+#: pretix_regid/views.py:28
+msgid "When the order is placed"
 msgstr ""
 
 #: pretix_regid/views.py:29
+msgid "When the order is approved"
+msgstr ""
+
+#: pretix_regid/views.py:30
+msgid "When the order is paid"
+msgstr ""
+
+#: pretix_regid/views.py:32
+msgid "Set Registration ID"
+msgstr ""
+
+#: pretix_regid/views.py:34
 msgid ""
-"Set the registration ID on placed orders. If you leave the rest empty, it "
-"will only set it once the order is placed"
+"Only orders that require approval are ever approved. If you choose \"When "
+"the order is approved\", other orders don't get a registration ID."
 msgstr ""
 
-#: pretix_regid/views.py:35
-msgid "Set Registration ID on approved"
-msgstr ""
-
-#: pretix_regid/views.py:37
-msgid ""
-"Set the registration ID on approved orders. If you leave the rest empty, it "
-"will only set it once the order is approved"
-msgstr ""
-
-#: pretix_regid/views.py:43
-msgid "Set Registration ID on paid"
-msgstr ""
-
-#: pretix_regid/views.py:45
-msgid ""
-"Set the registration ID on paid orders. If you leave the rest empty, it will "
-"only set it once the order is paid"
-msgstr ""
-
-#: pretix_regid/views.py:51
+#: pretix_regid/views.py:41
 msgid "Set Registration ID on order changed"
 msgstr ""
 
-#: pretix_regid/views.py:52
+#: pretix_regid/views.py:42
 msgid "Set the registration ID when a order has a change in products."
 msgstr ""

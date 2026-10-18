@@ -20,9 +20,7 @@ from .models import RegistrationID
 logger = logging.getLogger(__name__)
 
 settings_hierarkey.add_default("regid__products", "[]", list)
-settings_hierarkey.add_default("regid__set_on_placed", "False", bool)
-settings_hierarkey.add_default("regid__set_on_approved", "False", bool)
-settings_hierarkey.add_default("regid__set_on_paid", "False", bool)
+settings_hierarkey.add_default("regid__set_on", "never", str)
 settings_hierarkey.add_default("regid__set_on_changed", "False", bool)
 
 
@@ -56,19 +54,19 @@ def set_regid_on_order(order: Order):
 
 @receiver(order_placed, dispatch_uid="pretix_regid_order_placed")
 def on_order_placed(sender: Event, order: Order, **kwargs):
-    if sender.settings.regid__set_on_placed:
+    if sender.settings.regid__set_on == "placed":
         set_regid_on_order(order)
 
 
 @receiver(order_approved, dispatch_uid="pretix_regid_order_approved")
 def on_order_approved(sender: Event, order: Order, **kwargs):
-    if sender.settings.regid__set_on_approved:
+    if sender.settings.regid__set_on == "approved":
         set_regid_on_order(order)
 
 
 @receiver(order_paid, dispatch_uid="pretix_regid_order_paid")
 def on_order_paid(sender: Event, order: Order, **kwargs):
-    if sender.settings.regid__set_on_paid:
+    if sender.settings.regid__set_on == "paid":
         set_regid_on_order(order)
 
 

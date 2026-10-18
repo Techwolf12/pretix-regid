@@ -14,22 +14,20 @@ def regid_of(order):
 @pytest.fixture
 def configured(event, item):
     event.settings.regid__products = [str(item.pk)]
-    event.settings.regid__set_on_paid = True
+    event.settings.regid__set_on = "paid"
     return event
 
 
 @pytest.mark.django_db
 def test_defaults(event):
     assert event.settings.regid__products == []
-    assert event.settings.regid__set_on_placed is False
-    assert event.settings.regid__set_on_approved is False
-    assert event.settings.regid__set_on_paid is False
+    assert event.settings.regid__set_on == "never"
     assert event.settings.regid__set_on_changed is False
 
 
 @pytest.mark.django_db
 def test_no_regid_without_products(event, item, make_order):
-    event.settings.regid__set_on_paid = True
+    event.settings.regid__set_on = "paid"
     order = make_order(item)
     order_paid.send(event, order=order)
     assert regid_of(order) is None
@@ -53,20 +51,30 @@ def test_no_regid_when_trigger_disabled(configured, item, make_order):
 
 @pytest.mark.django_db
 @pytest.mark.parametrize(
-    "setting,signal",
+    "setting,value,signal",
     [
-        ("regid__set_on_placed", order_placed),
-        ("regid__set_on_approved", order_approved),
-        ("regid__set_on_paid", order_paid),
-        ("regid__set_on_changed", order_changed),
+        ("regid__set_on", "placed", order_placed),
+        ("regid__set_on", "approved", order_approved),
+        ("regid__set_on", "paid", order_paid),
+        ("regid__set_on_changed", True, order_changed),
     ],
 )
-def test_trigger(event, item, make_order, setting, signal):
+def test_trigger(event, item, make_order, setting, value, signal):
     event.settings.regid__products = [str(item.pk)]
-    event.settings.set(setting, True)
+    event.settings.set(setting, value)
     order = make_order(item)
     signal.send(event, order=order)
     assert regid_of(order) == 1
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize("value", ["never", "placed", "approved"])
+def test_only_selected_trigger_fires(event, item, make_order, value):
+    event.settings.regid__products = [str(item.pk)]
+    event.settings.regid__set_on = value
+    order = make_order(item)
+    order_paid.send(event, order=order)
+    assert regid_of(order) is None
 
 
 @pytest.mark.django_db
@@ -98,7 +106,7 @@ def test_regids_are_per_event(configured, item, make_order, organizer):
     )
     item2 = Item.objects.create(event=ev2, name="Ticket", default_price=1)
     ev2.settings.regid__products = [str(item2.pk)]
-    ev2.settings.regid__set_on_paid = True
+    ev2.settings.regid__set_on = "paid"
 
     order_paid.send(configured, order=make_order(item))
     o2 = make_order(item2)
@@ -138,13 +146,17 @@ def test_settings_view_saves(admin_client, event, item, other_item):
 
     r = admin_client.post(
         settings_url(event),
-        {"regid__products": [str(item.pk)], "regid__set_on_approved": "on"},
+        {
+            "regid__products": [str(item.pk)],
+            "regid__set_on": "approved",
+            "regid__set_on_changed": "on",
+        },
     )
     assert r.status_code == 302
     event.settings.flush()
     assert event.settings.regid__products == [str(item.pk)]
-    assert event.settings.regid__set_on_approved is True
-    assert event.settings.regid__set_on_paid is False
+    assert event.settings.regid__set_on == "approved"
+    assert event.settings.regid__set_on_changed is True
 
     r = admin_client.get(settings_url(event))
     assert r.context["form"].initial["regid__products"] == [str(item.pk)]

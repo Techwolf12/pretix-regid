@@ -9,9 +9,10 @@ backend and to the customer.
 Configure it under *Settings → Registration ID* in your event:
 
 * Select the products that should get a registration ID. Orders that contain none of them don't get one.
-* Choose when the ID is assigned: when the order is placed, approved, paid and/or changed.
+* Choose when the ID is assigned: when the order is placed, approved or paid. You can additionally have it assigned
+  when an order is changed.
 
-Nothing is assigned until at least one product and one trigger are selected. Orders placed before the plugin was
+Nothing is assigned until at least one product and a moment to assign it are selected. Orders placed before the plugin was
 configured don't get a registration ID retroactively.
 
 To install:

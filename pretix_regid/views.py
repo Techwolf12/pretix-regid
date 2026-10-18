@@ -22,27 +22,17 @@ class RegistrationIDSettingsForm(SettingsForm):
         ),
     )
 
-    regid__set_on_placed = forms.BooleanField(
-        required=False,
-        label=_("Set Registration ID on placed"),
+    regid__set_on = forms.ChoiceField(
+        choices=[
+            ("never", _("Never")),
+            ("placed", _("When the order is placed")),
+            ("approved", _("When the order is approved")),
+            ("paid", _("When the order is paid")),
+        ],
+        label=_("Set Registration ID"),
         help_text=_(
-            "Set the registration ID on placed orders. If you leave the rest empty, it will only set it once the order is placed"
-        ),
-    )
-
-    regid__set_on_approved = forms.BooleanField(
-        required=False,
-        label=_("Set Registration ID on approved"),
-        help_text=_(
-            "Set the registration ID on approved orders. If you leave the rest empty, it will only set it once the order is approved"
-        ),
-    )
-
-    regid__set_on_paid = forms.BooleanField(
-        required=False,
-        label=_("Set Registration ID on paid"),
-        help_text=_(
-            "Set the registration ID on paid orders. If you leave the rest empty, it will only set it once the order is paid"
+            "Only orders that require approval are ever approved. If you choose "
+            '"When the order is approved", other orders don\'t get a registration ID.'
         ),
     )
 
