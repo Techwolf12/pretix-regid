@@ -1,10 +1,12 @@
-# Register your receivers here
 import logging
+from django.db import transaction
+from django.db.models import Max
 from django.dispatch import receiver
 from django.template.loader import get_template
 from django.urls import resolve, reverse
 from django.utils.translation import gettext_lazy as _
 from pretix.base.models import Event, Order
+from pretix.base.settings import settings_hierarkey
 from pretix.base.signals import order_approved, order_changed, order_paid, order_placed
 from pretix.control.signals import nav_event_settings, order_info as control_order_info
 from pretix.presale.signals import order_info
@@ -13,126 +15,101 @@ from .models import RegistrationID
 
 logger = logging.getLogger(__name__)
 
+settings_hierarkey.add_default("regid__products", "[]", list)
+settings_hierarkey.add_default("regid__set_on_placed", "False", bool)
+settings_hierarkey.add_default("regid__set_on_approved", "False", bool)
+settings_hierarkey.add_default("regid__set_on_paid", "False", bool)
+settings_hierarkey.add_default("regid__set_on_changed", "False", bool)
+
+
+def order_needs_regid(order: Order) -> bool:
+    products = order.event.settings.regid__products
+    return any(str(p.item_id) in products for p in order.positions.all())
+
 
 def set_regid_on_order(order: Order):
     event: Event = order.event
-    set_regid = False
 
-    # Check if order Positions have a product for which we need to create a regid
-    for orderPos in order.positions.all():
-        if str(orderPos.item.id) in event.settings.regid__products:
-            set_regid = True
-
-    # Check for existing reg id on order
-    try:
-        regid_order = (
-            RegistrationID.objects.all()
-            .filter(event=event, order=order)
-            .order_by("-regid")
-        )
-    except RegistrationID.DoesNotExist:
-        regid_order = None
-
-    # If there exists a RegID, or we don't have a OrderPosition that needs one, do nothing.
-    if set_regid is False:
+    if not order_needs_regid(order):
         return
 
-    if regid_order is not None and regid_order.count() > 0:
-        return
+    with transaction.atomic():
+        # Lock the event row so concurrent orders can't be handed the same ID
+        Event.objects.select_for_update().only("pk").get(pk=event.pk)
 
-    try:
-        all_regids_in_event = (
-            RegistrationID.objects.all().filter(event=event).order_by("-regid")
+        if RegistrationID.objects.filter(order=order).exists():
+            return
+
+        highest = RegistrationID.objects.filter(event=event).aggregate(m=Max("regid"))[
+            "m"
+        ]
+        regid = RegistrationID.objects.create(
+            event=event, order=order, regid=(highest or 0) + 1
         )
-    except RegistrationID.DoesNotExist:
-        all_regids_in_event = None
 
-    if all_regids_in_event is None or all_regids_in_event.count() == 0:
-        # We either have no previous results or no results matching the event, so we set the regid to 1
-        new_regid = 1
-    else:
-        # Results are ordered by regid, get the highest one and add one
-        all_regids_in_event = all_regids_in_event[:1].get()
-        new_regid = all_regids_in_event.regid + 1
-
-    regid = RegistrationID(regid=new_regid, event=event, order=order)
-    regid.save()
-    logger.info("Registration ID Created:" + str(regid.regid))
+    logger.info("Registration ID %s created for order %s", regid.regid, order.code)
 
 
-# Once the order gets approved, add a registration ID to the order
-@receiver(order_approved, dispatch_uid="pretix_regid")
-def order_approved(order: Order, *args, **kwargs):
-    event: Event = order.event
-    if event.settings.regid__approved:
+@receiver(order_placed, dispatch_uid="pretix_regid_order_placed")
+def on_order_placed(sender: Event, order: Order, **kwargs):
+    if sender.settings.regid__set_on_placed:
         set_regid_on_order(order)
 
 
-# Once the order gets placed, add a registration ID to the order
-@receiver(order_placed, dispatch_uid="pretix_regid")
-def order_placed(order: Order, *args, **kwargs):
-    event: Event = order.event
-    if event.settings.regid__placed:
+@receiver(order_approved, dispatch_uid="pretix_regid_order_approved")
+def on_order_approved(sender: Event, order: Order, **kwargs):
+    if sender.settings.regid__set_on_approved:
         set_regid_on_order(order)
 
 
-# Once the order gets changed, add a registration ID to the order
-@receiver(order_changed, dispatch_uid="pretix_regid")
-def order_changed(order: Order, *args, **kwargs):
-    event: Event = order.event
-    if event.settings.regid__changed:
+@receiver(order_paid, dispatch_uid="pretix_regid_order_paid")
+def on_order_paid(sender: Event, order: Order, **kwargs):
+    if sender.settings.regid__set_on_paid:
         set_regid_on_order(order)
 
 
-# Once the order gets paid, add a registration ID to the order
-@receiver(order_paid, dispatch_uid="pretix_regid")
-def order_paid(order: Order, *args, **kwargs):
-    event: Event = order.event
-    if event.settings.regid__paid:
+@receiver(order_changed, dispatch_uid="pretix_regid_order_changed")
+def on_order_changed(sender: Event, order: Order, **kwargs):
+    if sender.settings.regid__set_on_changed:
         set_regid_on_order(order)
 
 
 # TODO Remove when order is cancelled?
 # TODO Recycle old reg id's?
 
-# Show Registration ID
-@receiver(control_order_info, dispatch_uid="regid_control_order_info")
-def control_order_info(sender: Event, request, order: Order, **kwargs):
-    template = get_template("pretix_regid/control_order_info.html")
-    try:
-        regid_from_order = RegistrationID.objects.get(order=order)
-    except RegistrationID.DoesNotExist:
-        regid_from_order = None
 
+@receiver(control_order_info, dispatch_uid="pretix_regid_control_order_info")
+def on_control_order_info(sender: Event, request, order: Order, **kwargs):
+    template = get_template("pretix_regid/control_order_info.html")
     ctx = {
         "order": order,
         "event": sender,
         "request": request,
-        "regid": regid_from_order,
+        "regid": RegistrationID.objects.filter(order=order).first(),
     }
-
     return template.render(ctx, request=request)
 
 
-@receiver(order_info, dispatch_uid="regid_order_info")
-def order_info(sender: Event, order: Order, **kwargs):
+@receiver(order_info, dispatch_uid="pretix_regid_order_info")
+def on_order_info(sender: Event, order: Order, **kwargs):
     template = get_template("pretix_regid/order_info.html")
-    try:
-        regid_from_order = RegistrationID.objects.get(order=order)
-    except RegistrationID.DoesNotExist:
-        regid_from_order = None
-
     ctx = {
         "order": order,
         "event": sender,
-        "regid": regid_from_order,
+        "regid": RegistrationID.objects.filter(order=order).first(),
     }
-
     return template.render(ctx)
 
 
-@receiver(nav_event_settings, dispatch_uid="pretix_regid")
-def navbar_settings(sender, request, **kwargs):
+@receiver(nav_event_settings, dispatch_uid="pretix_regid_nav_event_settings")
+def navbar_settings(sender: Event, request, **kwargs):
+    if not request.user.has_event_permission(
+        request.organizer,
+        request.event,
+        "event.settings.general:write",
+        request=request,
+    ):
+        return []
     url = resolve(request.path_info)
     return [
         {

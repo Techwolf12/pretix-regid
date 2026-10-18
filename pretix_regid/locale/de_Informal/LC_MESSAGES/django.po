@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-03-07 19:01+0100\n"
+"POT-Creation-Date: 2026-10-18 20:46+0200\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Christiaan de Die le Clercq (techwolf12)\n"
 "Language-Team: \n"
@@ -10,3 +10,91 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+
+#: pretix_regid/apps.py:16 pretix_regid/signals.py:116
+#: pretix_regid/templates/pretix_regid/control_order_info.html:7
+#: pretix_regid/templates/pretix_regid/order_info.html:7
+msgid "Registration ID"
+msgstr ""
+
+#: pretix_regid/apps.py:19
+msgid "Pretix plugin to add an automatic registration ID to approved orders"
+msgstr ""
+
+#: pretix_regid/templates/pretix_regid/control_order_info.html:13
+#, python-format
+msgid "This order's registration ID is: <strong>%(regid)s</strong>."
+msgstr ""
+
+#: pretix_regid/templates/pretix_regid/control_order_info.html:19
+msgid ""
+"Registration ID is not set. Maybe this order existed before the registration "
+"ID module, or your settings don't allow for a product type or state to get a "
+"registration ID."
+msgstr ""
+
+#: pretix_regid/templates/pretix_regid/order_info.html:12
+#, python-format
+msgid "Your registration ID is: <strong>%(regid)s</strong>."
+msgstr ""
+
+#: pretix_regid/templates/pretix_regid/settings.html:4
+#: pretix_regid/templates/pretix_regid/settings.html:6
+msgid "Registration ID Settings"
+msgstr ""
+
+#: pretix_regid/templates/pretix_regid/settings.html:7
+msgid "You can setup the registration ID feature here."
+msgstr ""
+
+#: pretix_regid/templates/pretix_regid/settings.html:20
+msgid "Save"
+msgstr ""
+
+#: pretix_regid/views.py:16
+msgid "Registration ID products"
+msgstr ""
+
+#: pretix_regid/views.py:20
+msgid ""
+"Registration IDs are only generated for orders that contain at least one of "
+"these products. If no product is selected, no registration IDs are generated."
+msgstr ""
+
+#: pretix_regid/views.py:27
+msgid "Set Registration ID on placed"
+msgstr ""
+
+#: pretix_regid/views.py:29
+msgid ""
+"Set the registration ID on placed orders. If you leave the rest empty, it "
+"will only set it once the order is placed"
+msgstr ""
+
+#: pretix_regid/views.py:35
+msgid "Set Registration ID on approved"
+msgstr ""
+
+#: pretix_regid/views.py:37
+msgid ""
+"Set the registration ID on approved orders. If you leave the rest empty, it "
+"will only set it once the order is approved"
+msgstr ""
+
+#: pretix_regid/views.py:43
+msgid "Set Registration ID on paid"
+msgstr ""
+
+#: pretix_regid/views.py:45
+msgid ""
+"Set the registration ID on paid orders. If you leave the rest empty, it will "
+"only set it once the order is paid"
+msgstr ""
+
+#: pretix_regid/views.py:51
+msgid "Set Registration ID on order changed"
+msgstr ""
+
+#: pretix_regid/views.py:52
+msgid "Set the registration ID when a order has a change in products."
+msgstr ""

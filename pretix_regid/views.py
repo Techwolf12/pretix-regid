@@ -10,17 +10,15 @@ from pretix.control.views.event import EventSettingsFormView, EventSettingsViewM
 logger = logging.getLogger(__name__)
 
 
-class RoomsharingSettingsForm(SettingsForm):
+class RegistrationIDSettingsForm(SettingsForm):
     regid__products = forms.MultipleChoiceField(
         choices=[],
         label=_("Registration ID products"),
         required=False,
         widget=CheckboxSelectMultiple,
         help_text=_(
-            """
-        Selecting a product here only generates registration ID's for these products.
-        By default, no registration ID's are generated unless products are selected here.
-        """
+            "Registration IDs are only generated for orders that contain at least one of "
+            "these products. If no product is selected, no registration IDs are generated."
         ),
     )
 
@@ -58,21 +56,16 @@ class RoomsharingSettingsForm(SettingsForm):
         event = kwargs.get("obj")
         super().__init__(*args, **kwargs)
 
-        choices = (
-            (str(i["id"]), i["name"]) for i in event.items.values("name", "id").all()
-        )
-
-        self.fields["regid__products"].choices = choices
-        #self.initial["regid__products"] = filter(
-        #    lambda x: x[0] in event.settings.regid__products, choices
-        #)
+        self.fields["regid__products"].choices = [
+            (str(item.pk), str(item.name)) for item in event.items.all()
+        ]
 
 
 class SettingsView(EventSettingsViewMixin, EventSettingsFormView):
     model = Event
-    form_class = RoomsharingSettingsForm
+    form_class = RegistrationIDSettingsForm
     template_name = "pretix_regid/settings.html"
-    permission = "can_change_settings"
+    permission = "event.settings.general:write"
 
     def get_success_url(self):
         return reverse(

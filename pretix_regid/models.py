@@ -16,4 +16,4 @@ class RegistrationID(LoggedModel):
         ordering = ("order",)
 
     def __str__(self):
-        return self.name
+        return str(self.regid)

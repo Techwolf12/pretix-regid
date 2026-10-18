@@ -3,9 +3,17 @@ Registration ID
 
 This is a plugin for `pretix`_. 
 
-Adds an automatic registration ID to approved orders. When enabling this plugin it will automatically create registration ID's on the event it is enabled. It has to be enabled from the start to work correctly, otherwise you will have users without registration ID.  
+Adds an automatic, sequential registration ID (1, 2, 3, ...) to orders. The ID is shown on the order page in the
+backend and to the customer.
 
-  
+Configure it under *Settings → Registration ID* in your event:
+
+* Select the products that should get a registration ID. Orders that contain none of them don't get one.
+* Choose when the ID is assigned: when the order is placed, approved, paid and/or changed.
+
+Nothing is assigned until at least one product and one trigger are selected. Orders placed before the plugin was
+configured don't get a registration ID retroactively.
+
 To install:
 ``pip3 install pretix-regid && python3 -m pretix migrate && python3 -m pretix rebuild && service pretix-web restart``
 
