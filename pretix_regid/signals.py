@@ -1,6 +1,6 @@
 import logging
 from django.db import transaction
-from django.db.models import Max
+from django.db.models import Max, Q
 from django.dispatch import receiver
 from django.template.loader import get_template
 from django.urls import resolve, reverse
@@ -8,7 +8,11 @@ from django.utils.translation import gettext_lazy as _
 from pretix.base.models import Event, Order
 from pretix.base.settings import settings_hierarkey
 from pretix.base.signals import order_approved, order_changed, order_paid, order_placed
-from pretix.control.signals import nav_event_settings, order_info as control_order_info
+from pretix.control.signals import (
+    nav_event_settings,
+    order_info as control_order_info,
+    order_search_filter_q,
+)
 from pretix.presale.signals import order_info
 
 from .models import RegistrationID
@@ -72,6 +76,23 @@ def on_order_paid(sender: Event, order: Order, **kwargs):
 def on_order_changed(sender: Event, order: Order, **kwargs):
     if sender.settings.regid__set_on_changed:
         set_regid_on_order(order)
+
+
+# Lets the order search (control and API) find orders by registration ID. This is a
+# global signal, so it also runs for events that don't have the plugin enabled.
+@receiver(order_search_filter_q, dispatch_uid="pretix_regid_order_search_filter_q")
+def on_order_search_filter_q(sender, query, **kwargs):
+    query = query.strip()
+    # Cap the length so the value fits the integer column
+    if not (query.isascii() and query.isdigit()) or len(query) > 9:
+        return Q()
+    if sender is not None and "pretix_regid" not in sender.get_plugins():
+        return Q()
+
+    regids = RegistrationID.objects.filter(regid=int(query))
+    if sender is not None:
+        regids = regids.filter(event=sender)
+    return Q(pk__in=regids.values("order_id"))
 
 
 # TODO Remove when order is cancelled?

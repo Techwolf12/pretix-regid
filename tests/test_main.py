@@ -167,3 +167,61 @@ def test_control_order_page_shows_regid(admin_client, configured, item, make_ord
     )
     assert r.status_code == 200
     assert "registration ID is: <strong>1</strong>" in r.content.decode()
+
+
+def search(client, event, query):
+    r = client.get(
+        "/control/event/%s/%s/orders/" % (event.organizer.slug, event.slug),
+        {"query": query},
+    )
+    assert r.status_code == 200
+    return {o.code for o in r.context["orders"]}
+
+
+@pytest.mark.django_db
+def test_order_search_by_regid(admin_client, configured, item, make_order):
+    o1, o2 = make_order(item), make_order(item)
+    order_paid.send(configured, order=o1)
+    order_paid.send(configured, order=o2)
+    assert search(admin_client, configured, "2") == {o2.code}
+    assert search(admin_client, configured, " 1 ") == {o1.code}
+    assert search(admin_client, configured, "3") == set()
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize("query", ["abc", "²", "99999999999999999999"])
+def test_order_search_ignores_non_regid_queries(
+    admin_client, configured, item, make_order, query
+):
+    order_paid.send(configured, order=make_order(item))
+    assert search(admin_client, configured, query) == set()
+
+
+@pytest.mark.django_db
+def test_order_search_by_regid_plugin_disabled(
+    admin_client, configured, item, make_order
+):
+    order_paid.send(configured, order=make_order(item))
+    configured.disable_plugin("pretix_regid")
+    configured.save()
+    assert search(admin_client, configured, "1") == set()
+
+
+@pytest.mark.django_db
+def test_order_search_by_regid_api(configured, item, make_order, organizer):
+    from pretix.base.models import Team
+    from rest_framework.test import APIClient
+
+    order = make_order(item)
+    order_paid.send(configured, order=order)
+    team = Team.objects.create(
+        organizer=organizer, all_events=True, all_event_permissions=True
+    )
+    client = APIClient()
+    client.credentials(HTTP_AUTHORIZATION="Token " + team.tokens.create(name="t").token)
+    r = client.get(
+        "/api/v1/organizers/%s/events/%s/orders/" % (organizer.slug, configured.slug),
+        {"search": "1"},
+    )
+    assert r.status_code == 200
+    assert [o["code"] for o in r.data["results"]] == [order.code]

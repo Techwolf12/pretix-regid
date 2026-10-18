@@ -1,4 +1,5 @@
 import pytest
+import string
 from datetime import timedelta
 from decimal import Decimal
 from django.utils.timezone import now
@@ -38,13 +39,13 @@ def other_item(event):
 
 @pytest.fixture
 def make_order():
-    counter = iter(range(1, 1000))
+    codes = iter(string.ascii_uppercase)
 
     def make(*items):
         event = items[0].event
         with scopes_disabled():
             order = Order.objects.create(
-                code="ORDER%d" % next(counter),
+                code="ORDER" + next(codes),
                 event=event,
                 email="dummy@dummy.test",
                 status=Order.STATUS_PENDING,
