@@ -3,7 +3,8 @@ name = "pretix-regid"
 dynamic = ["version"]
 description = "Adds an automatic registration ID to approved orders"
 readme = "README.rst"
-license = {file = "LICENSE"}
+license = "Apache-2.0"
+license-files = ["LICENSE"]
 keywords = ["pretix"]
 authors = [
     {name = "Christiaan de Die le Clercq (techwolf12)", email = "contact@techwolf12.nl"},
@@ -23,7 +24,7 @@ build = "pretix_plugin_build.build:CustomBuild"
 
 [build-system]
 requires = [
-    "setuptools",
+    "setuptools>=77",
     "pretix-plugin-build",
 ]
 
