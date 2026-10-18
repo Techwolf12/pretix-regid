@@ -3,6 +3,7 @@ from django.shortcuts import get_object_or_404
 from pretix.api.serializers.order import OrderSerializer
 from pretix.base.models import Checkin, Order, OrderFee, OrderPosition, QuestionAnswer
 from rest_framework import viewsets
+from rest_framework.decorators import action
 from rest_framework.exceptions import NotFound
 from rest_framework.response import Response
 
@@ -68,3 +69,16 @@ class RegistrationIDViewSet(viewsets.ViewSet):
             },
         )
         return Response({"regid": regid.regid, **serializer.data})
+
+    @action(detail=False, url_path=r"by-order/(?P<code>[^/]+)", url_name="by-order")
+    def by_order(self, request, code=None, **kwargs):
+        """Look up the registration ID of an order by its order code.
+
+        ``regid`` is ``null`` if the order has no registration ID.
+        """
+        if "pretix_regid" not in request.event.get_plugins():
+            raise NotFound()
+
+        order = get_object_or_404(Order, event=request.event, code=code)
+        regid = RegistrationID.objects.filter(order=order).first()
+        return Response({"order": order.code, "regid": regid.regid if regid else None})

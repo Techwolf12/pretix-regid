@@ -143,3 +143,74 @@ def test_device_pretixscan_profile_not_allowed(organizer, event, order_with_regi
     # pretixSCAN profiles only allow a fixed list of pretix's own endpoints
     r = device_client(organizer, "pretixscan").get(url(event, 1))
     assert r.status_code == 403
+
+
+def order_url(event, code):
+    return "/api/v1/organizers/%s/events/%s/regid/by-order/%s/" % (
+        event.organizer.slug,
+        event.slug,
+        code,
+    )
+
+
+def test_regid_by_order_code(token_client, event, order_with_regid):
+    r = token_client.get(order_url(event, order_with_regid.code))
+    assert r.status_code == 200
+    assert r.data == {"order": order_with_regid.code, "regid": 1}
+
+
+def test_regid_by_order_code_without_regid(token_client, event, other_item, make_order):
+    order = make_order(other_item)
+    r = token_client.get(order_url(event, order.code))
+    assert r.status_code == 200
+    assert r.data == {"order": order.code, "regid": None}
+
+
+def test_regid_by_unknown_order_code(token_client, event, order_with_regid):
+    assert token_client.get(order_url(event, "NOPE1")).status_code == 404
+
+
+def test_regid_by_order_code_of_other_event(
+    token_client, organizer, event, order_with_regid
+):
+    other = Event.objects.create(
+        organizer=organizer,
+        name="Other",
+        slug="other",
+        date_from=now(),
+        plugins="pretix_regid",
+    )
+    assert token_client.get(order_url(other, order_with_regid.code)).status_code == 404
+
+
+def test_regid_by_order_code_read_only(token_client, event, order_with_regid):
+    assert (
+        token_client.post(order_url(event, order_with_regid.code), {}).status_code
+        == 405
+    )
+
+
+def test_regid_by_order_code_plugin_disabled(token_client, event, order_with_regid):
+    event.disable_plugin("pretix_regid")
+    event.save()
+    assert token_client.get(order_url(event, order_with_regid.code)).status_code == 404
+
+
+def test_regid_by_order_code_requires_permission(organizer, event, order_with_regid):
+    team = Team.objects.create(
+        organizer=organizer,
+        all_events=True,
+        all_event_permissions=False,
+        limit_event_permissions={"event.settings.general:write": True},
+    )
+    client = APIClient()
+    client.credentials(HTTP_AUTHORIZATION="Token " + team.tokens.create(name="t").token)
+    assert client.get(order_url(event, order_with_regid.code)).status_code == 403
+
+
+def test_old_order_regid_route_is_gone(token_client, event, order_with_regid):
+    r = token_client.get(
+        "/api/v1/organizers/%s/events/%s/orders/%s/regid/"
+        % (event.organizer.slug, event.slug, order_with_regid.code)
+    )
+    assert r.status_code == 404

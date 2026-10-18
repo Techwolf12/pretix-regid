@@ -27,6 +27,13 @@ with an additional ``regid`` field. The ``include`` and ``exclude`` query parame
 too. It requires the "view orders" permission and works with team API tokens, OAuth and devices with full device
 access. Devices with a pretixSCAN security profile are not allowed to use it.
 
+Look up the registration ID of an order by its order code::
+
+    GET /api/v1/organizers/<organizer>/events/<event>/regid/by-order/<order code>/
+
+This returns ``{"order": "<order code>", "regid": 42}``, or ``"regid": null`` if the order has no registration ID.
+Unknown order codes return 404. The same permissions apply as above.
+
 To install:
 ``pip3 install pretix-regid && python3 -m pretix migrate && python3 -m pretix rebuild && service pretix-web restart``
 
