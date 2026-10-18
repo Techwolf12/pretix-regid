@@ -1,0 +1,35 @@
+name: Release
+
+# Publishes to PyPI when a GitHub release is published. Bump __version__ in
+# pretix_regid/__init__.py first; the release tag should match that version.
+on:
+  release:
+    types: [ published ]
+
+permissions:
+  contents: read
+
+jobs:
+  pypi:
+    name: Publish to PyPI
+    runs-on: ubuntu-latest
+    environment: pypi
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+      - name: Install system dependencies
+        run: sudo apt-get update && sudo apt-get install -y gettext
+      - name: Install dependencies
+        run: pip install build twine check-manifest
+      - name: Run check-manifest
+        run: check-manifest .
+      - name: Build package
+        run: python -m build
+      - name: Check package
+        run: twine check dist/*
+      - name: Publish to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          password: ${{ secrets.PYPI_TOKEN }}
