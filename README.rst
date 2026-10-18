@@ -15,6 +15,18 @@ Configure it under *Settings → Registration ID* in your event:
 Nothing is assigned until at least one product and a moment to assign it are selected. Orders placed before the plugin was
 configured don't get a registration ID retroactively.
 
+REST API
+--------
+
+Look up an order by its registration ID::
+
+    GET /api/v1/organizers/<organizer>/events/<event>/regid/<registration ID>/
+
+The response is the same as pretix's ``GET .../orders/<code>/`` (including positions with their question answers),
+with an additional ``regid`` field. The ``include`` and ``exclude`` query parameters of the order endpoint work here
+too. It requires the "view orders" permission and works with team API tokens, OAuth and devices with full device
+access. Devices with a pretixSCAN security profile are not allowed to use it.
+
 To install:
 ``pip3 install pretix-regid && python3 -m pretix migrate && python3 -m pretix rebuild && service pretix-web restart``
 
