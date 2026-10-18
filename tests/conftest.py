@@ -43,9 +43,10 @@ def make_order():
 
     def make(*items):
         event = items[0].event
+        code = "ORDER" + next(codes)
         with scopes_disabled():
             order = Order.objects.create(
-                code="ORDER" + next(codes),
+                code=code,
                 event=event,
                 email="dummy@dummy.test",
                 status=Order.STATUS_PENDING,
@@ -54,9 +55,17 @@ def make_order():
                 total=sum(i.default_price for i in items),
                 sales_channel=event.organizer.sales_channels.get(identifier="web"),
             )
-            for i in items:
+            # The order search also matches the start of secret and pseudonymization_id.
+            # Both are random by default, so fix them to values without digits.
+            for n, i in enumerate(items):
+                suffix = code + string.ascii_uppercase[n]
                 OrderPosition.objects.create(
-                    order=order, item=i, variation=None, price=i.default_price
+                    order=order,
+                    item=i,
+                    variation=None,
+                    price=i.default_price,
+                    secret="SECRET" + suffix,
+                    pseudonymization_id="PSEUDO" + suffix,
                 )
         return order
 
