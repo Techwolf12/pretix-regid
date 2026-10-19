@@ -237,3 +237,35 @@ def test_order_search_by_regid_api(configured, item, make_order, organizer):
     )
     assert r.status_code == 200
     assert [o["code"] for o in r.data["results"]] == [order.code]
+
+
+def _regid_layout_variable(event):
+    from pretix.base.signals import layout_text_variables
+
+    for _receiver, response in layout_text_variables.send(event):
+        if "pretix_regid_regid" in (response or {}):
+            return response["pretix_regid_regid"]
+    return None
+
+
+@pytest.mark.django_db
+def test_layout_text_variable(configured, item, make_order):
+    with_regid = make_order(item)
+    order_paid.send(configured, order=with_regid)
+    without_regid = make_order(item)
+
+    var = _regid_layout_variable(configured)
+    assert var is not None
+
+    op = with_regid.positions.first()
+    assert var["evaluate"](op, with_regid, configured) == "1"
+    other_op = without_regid.positions.first()
+    assert var["evaluate"](other_op, without_regid, configured) == ""
+    assert var["evaluate_bulk"]([op, other_op]) == ["1", ""]
+
+
+@pytest.mark.django_db
+def test_layout_text_variable_plugin_disabled(configured):
+    configured.disable_plugin("pretix_regid")
+    configured.save()
+    assert _regid_layout_variable(configured) is None

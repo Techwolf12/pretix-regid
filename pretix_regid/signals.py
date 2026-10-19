@@ -7,7 +7,13 @@ from django.urls import resolve, reverse
 from django.utils.translation import gettext_lazy as _
 from pretix.base.models import Event, Order
 from pretix.base.settings import settings_hierarkey
-from pretix.base.signals import order_approved, order_changed, order_paid, order_placed
+from pretix.base.signals import (
+    layout_text_variables,
+    order_approved,
+    order_changed,
+    order_paid,
+    order_placed,
+)
 from pretix.control.signals import (
     nav_event_settings,
     order_info as control_order_info,
@@ -91,6 +97,33 @@ def on_order_search_filter_q(sender, query, **kwargs):
     if sender is not None:
         regids = regids.filter(event=sender)
     return Q(pk__in=regids.values("order_id"))
+
+
+def _regid_of_order(order: Order) -> str:
+    regid = RegistrationID.objects.filter(order=order).first()
+    return str(regid.regid) if regid else ""
+
+
+def _regids_of_positions(positions) -> list:
+    regids = dict(
+        RegistrationID.objects.filter(
+            order_id__in={op.order_id for op in positions}
+        ).values_list("order_id", "regid")
+    )
+    return [str(regids.get(op.order_id, "")) for op in positions]
+
+
+@receiver(layout_text_variables, dispatch_uid="pretix_regid_layout_text_variables")
+def on_layout_text_variables(sender: Event, **kwargs):
+    # Usable on tickets and badges, and included in the check-in API's pdf_data.
+    return {
+        "pretix_regid_regid": {
+            "label": _("Registration ID"),
+            "editor_sample": "42",
+            "evaluate": lambda op, order, ev: _regid_of_order(order),
+            "evaluate_bulk": _regids_of_positions,
+        },
+    }
 
 
 # TODO Remove when order is cancelled?
