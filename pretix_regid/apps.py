@@ -22,6 +22,13 @@ class PluginApp(PluginConfig):
         version = __version__
         category = "FEATURE"
         compatibility = "pretix>=2026.3.0"
+        settings_links = [
+            (
+                (gettext_lazy("Settings"), gettext_lazy("Registration ID")),
+                "plugins:pretix_regid:control.regid.settings",
+                {},
+            ),
+        ]
 
     def ready(self):
         from . import signals  # NOQA
