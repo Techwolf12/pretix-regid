@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-18 21:08+0200\n"
+"POT-Creation-Date: 2026-10-20 18:35+0200\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Christiaan de Die le Clercq (techwolf12)\n"
 "Language-Team: \n"
@@ -11,7 +11,8 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: pretix_regid/apps.py:16 pretix_regid/signals.py:135
+#: pretix_regid/apps.py:16 pretix_regid/apps.py:27 pretix_regid/signals.py:122
+#: pretix_regid/signals.py:171
 #: pretix_regid/templates/pretix_regid/control_order_info.html:7
 #: pretix_regid/templates/pretix_regid/order_info.html:7
 msgid "Registration ID"
@@ -19,6 +20,10 @@ msgstr ""
 
 #: pretix_regid/apps.py:19
 msgid "Pretix plugin to add an automatic registration ID to approved orders"
+msgstr ""
+
+#: pretix_regid/apps.py:27
+msgid "Settings"
 msgstr ""
 
 #: pretix_regid/templates/pretix_regid/control_order_info.html:13
@@ -47,7 +52,7 @@ msgstr ""
 msgid "You can setup the registration ID feature here."
 msgstr ""
 
-#: pretix_regid/templates/pretix_regid/settings.html:18
+#: pretix_regid/templates/pretix_regid/settings.html:19
 msgid "Save"
 msgstr ""
 
@@ -96,4 +101,15 @@ msgid ""
 "Also set a registration ID when an order without one is changed so that it "
 "now contains one of the selected products. Orders that already have a "
 "registration ID keep it."
+msgstr ""
+
+#: pretix_regid/views.py:51
+msgid "Hide registration ID from customers"
+msgstr ""
+
+#: pretix_regid/views.py:53
+msgid ""
+"Don't show the registration ID on the customer's order page. It is still "
+"assigned and visible in the backend and the API. It is only printed on "
+"tickets or badges if you add it to their layout yourself."
 msgstr ""

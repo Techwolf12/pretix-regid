@@ -4,13 +4,15 @@ Registration ID
 This is a plugin for `pretix`_. 
 
 Adds an automatic, sequential registration ID (1, 2, 3, ...) to orders. The ID is shown on the order page in the
-backend and to the customer.
+backend and, unless you hide it, to the customer.
 
 Configure it under *Settings → Registration ID* in your event:
 
 * Select the products that should get a registration ID. Orders that contain none of them don't get one.
 * Choose when the ID is assigned: when the order is placed, approved or paid. You can additionally have it assigned
   when an order is changed.
+* Optionally hide the ID from customers. It is then only shown in the backend and the API, and on tickets or badges
+  if you add it to their layout.
 
 Nothing is assigned until at least one product and a moment to assign it are selected. Orders placed before the plugin was
 configured don't get a registration ID retroactively.

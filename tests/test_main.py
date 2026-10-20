@@ -23,6 +23,7 @@ def test_defaults(event):
     assert event.settings.regid__products == []
     assert event.settings.regid__set_on == "never"
     assert event.settings.regid__set_on_changed is False
+    assert event.settings.regid__hide_from_customer is False
 
 
 @pytest.mark.django_db
@@ -150,6 +151,7 @@ def test_settings_view_saves(admin_client, event, item, other_item):
             "regid__products": [str(item.pk)],
             "regid__set_on": "approved",
             "regid__set_on_changed": "on",
+            "regid__hide_from_customer": "on",
         },
     )
     assert r.status_code == 302
@@ -157,6 +159,7 @@ def test_settings_view_saves(admin_client, event, item, other_item):
     assert event.settings.regid__products == [str(item.pk)]
     assert event.settings.regid__set_on == "approved"
     assert event.settings.regid__set_on_changed is True
+    assert event.settings.regid__hide_from_customer is True
 
     r = admin_client.get(settings_url(event))
     assert r.context["form"].initial["regid__products"] == [str(item.pk)]
@@ -178,6 +181,40 @@ def test_control_order_page_shows_regid(admin_client, configured, item, make_ord
         % (configured.organizer.slug, configured.slug, order.code)
     )
     assert r.status_code == 200
+    assert "registration ID is: <strong>1</strong>" in r.content.decode()
+
+
+def customer_order_info(event, order):
+    from pretix.presale.signals import order_info
+
+    return "".join(
+        str(response)
+        for _receiver, response in order_info.send(event, order=order, request=None)
+    )
+
+
+@pytest.mark.django_db
+def test_customer_order_info_shows_regid(configured, item, make_order):
+    order = make_order(item)
+    order_paid.send(configured, order=order)
+    assert "registration ID is: <strong>1</strong>" in customer_order_info(
+        configured, order
+    )
+
+
+@pytest.mark.django_db
+def test_customer_order_info_hidden(admin_client, configured, item, make_order):
+    configured.settings.regid__hide_from_customer = True
+    order = make_order(item)
+    order_paid.send(configured, order=order)
+    assert regid_of(order) == 1
+    assert "Registration ID" not in customer_order_info(configured, order)
+
+    # Still shown in the backend
+    r = admin_client.get(
+        "/control/event/%s/%s/orders/%s/"
+        % (configured.organizer.slug, configured.slug, order.code)
+    )
     assert "registration ID is: <strong>1</strong>" in r.content.decode()
 
 

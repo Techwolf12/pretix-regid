@@ -46,6 +46,16 @@ class RegistrationIDSettingsForm(SettingsForm):
         ),
     )
 
+    regid__hide_from_customer = forms.BooleanField(
+        required=False,
+        label=_("Hide registration ID from customers"),
+        help_text=_(
+            "Don't show the registration ID on the customer's order page. It is still "
+            "assigned and visible in the backend and the API. It is only printed on "
+            "tickets or badges if you add it to their layout yourself."
+        ),
+    )
+
     def __init__(self, *args, **kwargs):
         event = kwargs.get("obj")
         super().__init__(*args, **kwargs)

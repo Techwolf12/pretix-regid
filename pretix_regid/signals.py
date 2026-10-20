@@ -28,6 +28,7 @@ logger = logging.getLogger(__name__)
 settings_hierarkey.add_default("regid__products", "[]", list)
 settings_hierarkey.add_default("regid__set_on", "never", str)
 settings_hierarkey.add_default("regid__set_on_changed", "False", bool)
+settings_hierarkey.add_default("regid__hide_from_customer", "False", bool)
 
 
 def order_needs_regid(order: Order) -> bool:
@@ -144,6 +145,8 @@ def on_control_order_info(sender: Event, request, order: Order, **kwargs):
 
 @receiver(order_info, dispatch_uid="pretix_regid_order_info")
 def on_order_info(sender: Event, order: Order, **kwargs):
+    if sender.settings.regid__hide_from_customer:
+        return ""
     template = get_template("pretix_regid/order_info.html")
     ctx = {
         "order": order,
