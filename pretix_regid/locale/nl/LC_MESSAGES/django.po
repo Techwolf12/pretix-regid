@@ -1,0 +1,134 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-10-20 21:00+0200\n"
+"PO-Revision-Date: \n"
+"Last-Translator: Christiaan de Die le Clercq (techwolf12)\n"
+"Language-Team: Dutch\n"
+"Language: nl\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: pretix_regid/apps.py:16 pretix_regid/apps.py:27 pretix_regid/signals.py:122
+#: pretix_regid/signals.py:171
+#: pretix_regid/templates/pretix_regid/control_order_info.html:7
+#: pretix_regid/templates/pretix_regid/order_info.html:7
+msgid "Registration ID"
+msgstr "Registratienummer"
+
+#: pretix_regid/apps.py:19
+msgid "Pretix plugin to add an automatic registration ID to approved orders"
+msgstr ""
+"pretix-plugin dat goedgekeurde bestellingen automatisch een "
+"registratienummer geeft"
+
+#: pretix_regid/apps.py:27
+msgid "Settings"
+msgstr "Instellingen"
+
+#: pretix_regid/templates/pretix_regid/control_order_info.html:13
+#, python-format
+msgid "This order's registration ID is: <strong>%(regid)s</strong>."
+msgstr ""
+"Het registratienummer van deze bestelling is: <strong>%(regid)s</strong>."
+
+#: pretix_regid/templates/pretix_regid/control_order_info.html:19
+msgid ""
+"Registration ID is not set. Maybe this order existed before the registration "
+"ID module, or your settings don't allow for a product type or state to get a "
+"registration ID."
+msgstr ""
+"Er is geen registratienummer ingesteld. Misschien bestond deze bestelling al "
+"voor de registratienummermodule, of je instellingen kennen geen "
+"registratienummer toe aan dit producttype of deze status."
+
+#: pretix_regid/templates/pretix_regid/order_info.html:12
+#, python-format
+msgid "Your registration ID is: <strong>%(regid)s</strong>."
+msgstr "Je registratienummer is: <strong>%(regid)s</strong>."
+
+#: pretix_regid/templates/pretix_regid/settings.html:4
+#: pretix_regid/templates/pretix_regid/settings.html:6
+msgid "Registration ID Settings"
+msgstr "Instellingen registratienummer"
+
+#: pretix_regid/templates/pretix_regid/settings.html:7
+msgid "You can setup the registration ID feature here."
+msgstr "Hier kun je de registratienummers instellen."
+
+#: pretix_regid/templates/pretix_regid/settings.html:19
+msgid "Save"
+msgstr "Opslaan"
+
+#: pretix_regid/views.py:16
+msgid "Registration ID products"
+msgstr "Producten met registratienummer"
+
+#: pretix_regid/views.py:20
+msgid ""
+"Registration IDs are only generated for orders that contain at least one of "
+"these products. If no product is selected, no registration IDs are generated."
+msgstr ""
+"Registratienummers worden alleen toegekend aan bestellingen met ten minste "
+"één van deze producten. Als er geen product is geselecteerd, worden er geen "
+"registratienummers toegekend."
+
+#: pretix_regid/views.py:27
+msgid "Never"
+msgstr "Nooit"
+
+#: pretix_regid/views.py:28
+msgid "When the order is placed"
+msgstr "Wanneer de bestelling wordt geplaatst"
+
+#: pretix_regid/views.py:29
+msgid "When the order is approved"
+msgstr "Wanneer de bestelling wordt goedgekeurd"
+
+#: pretix_regid/views.py:30
+msgid "When the order is paid"
+msgstr "Wanneer de bestelling wordt betaald"
+
+#: pretix_regid/views.py:32
+msgid "Set Registration ID"
+msgstr "Registratienummer toekennen"
+
+#: pretix_regid/views.py:34
+msgid ""
+"Only orders that require approval are ever approved. If you choose \"When "
+"the order is approved\", other orders don't get a registration ID."
+msgstr ""
+"Alleen bestellingen die goedkeuring vereisen, worden ooit goedgekeurd. Als "
+"je „Wanneer de bestelling wordt goedgekeurd” kiest, krijgen andere "
+"bestellingen geen registratienummer."
+
+#: pretix_regid/views.py:41
+msgid "Set Registration ID on order changed"
+msgstr "Registratienummer toekennen bij wijziging van de bestelling"
+
+#: pretix_regid/views.py:43
+msgid ""
+"Also set a registration ID when an order without one is changed so that it "
+"now contains one of the selected products. Orders that already have a "
+"registration ID keep it."
+msgstr ""
+"Ook een registratienummer toekennen wanneer een bestelling zonder nummer zo "
+"wordt gewijzigd dat ze nu een van de geselecteerde producten bevat. "
+"Bestellingen die al een registratienummer hebben, houden dat."
+
+#: pretix_regid/views.py:51
+msgid "Hide registration ID from customers"
+msgstr "Registratienummer verbergen voor klanten"
+
+#: pretix_regid/views.py:53
+msgid ""
+"Don't show the registration ID on the customer's order page. It is still "
+"assigned and visible in the backend and the API. It is only printed on "
+"tickets or badges if you add it to their layout yourself."
+msgstr ""
+"Het registratienummer niet tonen op de bestelpagina van de klant. Het wordt "
+"nog steeds toegekend en is zichtbaar in de backend en de API. Het wordt "
+"alleen op tickets of badges gedrukt als je het zelf aan de lay-out toevoegt."

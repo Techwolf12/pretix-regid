@@ -5,31 +5,36 @@ msgstr ""
 "POT-Creation-Date: 2026-10-20 18:35+0200\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Christiaan de Die le Clercq (techwolf12)\n"
-"Language-Team: \n"
-"Language: de\n"
+"Language-Team: German (informal)\n"
+"Language: de_Informal\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: pretix_regid/apps.py:16 pretix_regid/apps.py:27 pretix_regid/signals.py:122
 #: pretix_regid/signals.py:171
 #: pretix_regid/templates/pretix_regid/control_order_info.html:7
 #: pretix_regid/templates/pretix_regid/order_info.html:7
 msgid "Registration ID"
-msgstr ""
+msgstr "Registrierungsnummer"
 
 #: pretix_regid/apps.py:19
 msgid "Pretix plugin to add an automatic registration ID to approved orders"
 msgstr ""
+"pretix-Plugin, das freigegebenen Bestellungen automatisch eine "
+"Registrierungsnummer zuweist"
 
 #: pretix_regid/apps.py:27
 msgid "Settings"
-msgstr ""
+msgstr "Einstellungen"
 
 #: pretix_regid/templates/pretix_regid/control_order_info.html:13
 #, python-format
 msgid "This order's registration ID is: <strong>%(regid)s</strong>."
 msgstr ""
+"Die Registrierungsnummer dieser Bestellung lautet: "
+"<strong>%(regid)s</strong>."
 
 #: pretix_regid/templates/pretix_regid/control_order_info.html:19
 msgid ""
@@ -37,64 +42,74 @@ msgid ""
 "ID module, or your settings don't allow for a product type or state to get a "
 "registration ID."
 msgstr ""
+"Es ist keine Registrierungsnummer gesetzt. Vielleicht gab es diese "
+"Bestellung schon vor dem Registrierungsnummer-Modul, oder deine "
+"Einstellungen vergeben für diesen Produkttyp oder Status keine "
+"Registrierungsnummer."
 
 #: pretix_regid/templates/pretix_regid/order_info.html:12
 #, python-format
 msgid "Your registration ID is: <strong>%(regid)s</strong>."
-msgstr ""
+msgstr "Deine Registrierungsnummer lautet: <strong>%(regid)s</strong>."
 
 #: pretix_regid/templates/pretix_regid/settings.html:4
 #: pretix_regid/templates/pretix_regid/settings.html:6
 msgid "Registration ID Settings"
-msgstr ""
+msgstr "Einstellungen Registrierungsnummer"
 
 #: pretix_regid/templates/pretix_regid/settings.html:7
 msgid "You can setup the registration ID feature here."
-msgstr ""
+msgstr "Hier kannst du die Registrierungsnummern einrichten."
 
 #: pretix_regid/templates/pretix_regid/settings.html:19
 msgid "Save"
-msgstr ""
+msgstr "Speichern"
 
 #: pretix_regid/views.py:16
 msgid "Registration ID products"
-msgstr ""
+msgstr "Produkte mit Registrierungsnummer"
 
 #: pretix_regid/views.py:20
 msgid ""
 "Registration IDs are only generated for orders that contain at least one of "
 "these products. If no product is selected, no registration IDs are generated."
 msgstr ""
+"Registrierungsnummern werden nur für Bestellungen vergeben, die mindestens "
+"eines dieser Produkte enthalten. Ist kein Produkt ausgewählt, werden keine "
+"Registrierungsnummern vergeben."
 
 #: pretix_regid/views.py:27
 msgid "Never"
-msgstr ""
+msgstr "Nie"
 
 #: pretix_regid/views.py:28
 msgid "When the order is placed"
-msgstr ""
+msgstr "Wenn die Bestellung aufgegeben wird"
 
 #: pretix_regid/views.py:29
 msgid "When the order is approved"
-msgstr ""
+msgstr "Wenn die Bestellung freigegeben wird"
 
 #: pretix_regid/views.py:30
 msgid "When the order is paid"
-msgstr ""
+msgstr "Wenn die Bestellung bezahlt wird"
 
 #: pretix_regid/views.py:32
 msgid "Set Registration ID"
-msgstr ""
+msgstr "Registrierungsnummer vergeben"
 
 #: pretix_regid/views.py:34
 msgid ""
 "Only orders that require approval are ever approved. If you choose \"When "
 "the order is approved\", other orders don't get a registration ID."
 msgstr ""
+"Nur Bestellungen, die eine Freigabe erfordern, werden jemals freigegeben. "
+"Wenn du „Wenn die Bestellung freigegeben wird“ wählst, erhalten andere "
+"Bestellungen keine Registrierungsnummer."
 
 #: pretix_regid/views.py:41
 msgid "Set Registration ID on order changed"
-msgstr ""
+msgstr "Registrierungsnummer bei Änderung der Bestellung vergeben"
 
 #: pretix_regid/views.py:43
 msgid ""
@@ -102,10 +117,13 @@ msgid ""
 "now contains one of the selected products. Orders that already have a "
 "registration ID keep it."
 msgstr ""
+"Auch eine Registrierungsnummer vergeben, wenn eine Bestellung ohne Nummer so "
+"geändert wird, dass sie nun eines der ausgewählten Produkte enthält. "
+"Bestellungen, die bereits eine Registrierungsnummer haben, behalten sie."
 
 #: pretix_regid/views.py:51
 msgid "Hide registration ID from customers"
-msgstr ""
+msgstr "Registrierungsnummer vor Kund*innen verbergen"
 
 #: pretix_regid/views.py:53
 msgid ""
@@ -113,3 +131,7 @@ msgid ""
 "assigned and visible in the backend and the API. It is only printed on "
 "tickets or badges if you add it to their layout yourself."
 msgstr ""
+"Die Registrierungsnummer nicht auf der Bestellseite der Kund*innen anzeigen. "
+"Sie wird trotzdem vergeben und ist im Backend und in der API sichtbar. Auf "
+"Tickets oder Badges wird sie nur gedruckt, wenn du sie selbst zu deren "
+"Layout hinzufügst."
